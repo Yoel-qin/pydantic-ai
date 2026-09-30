@@ -31,7 +31,7 @@ def _map_decode_errors(model_name: str, *more_decode_errors: type[Exception]) ->
         raise ModelAPIError(model_name=model_name, message=f'Failed to decode response as JSON: {e}') from e
 
 
-class _MapStreamDecodeErrors(Generic[_ChunkT]):
+class _MapStreamDecodeErrors(Generic[_ChunkT]):  # pyright: ignore[reportUnusedClass] — used by the provider adapters
     """Apply `_map_decode_errors` to the SDK decoding each chunk, but not to the code consuming it.
 
     A plain iterator rather than an async generator, so it adds no generator for the event loop to finalize when a stream

@@ -7507,7 +7507,10 @@ class _EmptyBodyStubClient:
     A stub client stands in for a cassette because no real Bedrock endpoint returns an empty 200 body on demand.
     """
 
-    meta = SimpleNamespace(endpoint_url='https://bedrock.stub', events=HierarchicalEmitter())
+    def __init__(self) -> None:
+        # In `__init__` rather than a class attribute so collection never evaluates `HierarchicalEmitter` when
+        # bedrock isn't installed and the try-import block above failed.
+        self.meta = SimpleNamespace(endpoint_url='https://bedrock.stub', events=HierarchicalEmitter())
 
     def converse(self, **_: Any) -> dict[str, Any]:
         return {}
