@@ -13,14 +13,14 @@ from typing import TYPE_CHECKING, Any, Literal
 from pydantic import PrivateAttr
 
 from pydantic_ai.models import AbstractModel
-from pydantic_ai.tools import RunContext
+from pydantic_ai.tools import RunContext, ToolDefinition
 from pydantic_ai.usage import RunUsage
 
 if TYPE_CHECKING:
     from fastmcp import FastMCP
     from fastmcp.tools import Tool, ToolResult
 
-    from pydantic_ai.toolsets import AbstractToolset, AgentToolset, ToolDefinition, ToolsetTool
+    from pydantic_ai.toolsets import AbstractToolset, AgentToolset, ToolsetTool
 else:
     try:
         from fastmcp import FastMCP

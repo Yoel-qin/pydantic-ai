@@ -183,6 +183,7 @@ _CAPABILITY_PAGE_META = {
     'stackone.md': ('stackone', 'StackOne'),
     'slack.md': ('slack', 'Slack'),
     'acp.md': ('experimental/acp', 'ACP (Agent Client Protocol)'),
+    'mcp-server.md': ('experimental/mcp_server', 'MCP Server (experimental)'),
 }
 
 
@@ -333,7 +334,12 @@ def test_doc_page_lead_is_purpose_first(page: Path) -> None:
 
 @pytest.mark.parametrize(
     'page',
-    [p for p in _CAPABILITY_DOC_PAGES if p.name != _ACP_PAGE],
+    [
+        p
+        for p in _CAPABILITY_DOC_PAGES
+        # Experimental modules (ACP, MCP server) legitimately carry experimental framing.
+        if not _CAPABILITY_PAGE_META[p.name][0].startswith('experimental/')
+    ],
     ids=lambda p: p.name,
 )
 def test_graduated_doc_page_has_no_experimental_framing(page: Path) -> None:
@@ -341,7 +347,7 @@ def test_graduated_doc_page_has_no_experimental_framing(page: Path) -> None:
     hit = next((m for m in _EXPERIMENTAL_MARKERS if m in text), None)
     assert hit is None, (
         f'{page.relative_to(_ROOT)}: graduated capability still carries experimental framing ({hit!r}). '
-        'Only ACP keeps an experimental note; soften the rest to the README stability note.'
+        'Experimental modules keep their experimental note; soften the rest to the README stability note.'
     )
 
 

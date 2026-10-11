@@ -17,6 +17,7 @@ to editors over ACP, and running one as a GitHub Agentic Workflow.
 | Let the agent write new capabilities that load on the next run | `CapabilityCreation` |
 | Define the agent in YAML/JSON with harness capabilities | `Agent.from_file(..., custom_capability_types=[...])` |
 | Use the agent inside Zed or another ACP editor | `pydantic_ai_harness.experimental.acp` |
+| Serve existing toolsets to MCP clients like Claude Code | `pydantic_ai_harness.experimental.mcp_server` |
 | Run the agent headless on GitHub issues/PRs/schedules | the gh-aw `pydantic-ai` engine |
 
 ## StepPersistence
@@ -393,6 +394,35 @@ Gotchas: root tools at `session.cwd` through `session_config`, not a static `Fil
 `prompt_capabilities`. `models=[...]` exposes a model picker. Use async `run_acp_stdio` inside a running
 loop. Silence the warning with `warnings.filterwarnings('ignore', category=HarnessExperimentalWarning)`
 (importing `pydantic_ai_harness.experimental` itself does not warn).
+
+
+## MCP Server (experimental)
+
+Serves any Pydantic AI toolsets as an MCP server, so MCP clients like Claude Code can call them without a
+rewrite. It lives under `pydantic_ai_harness.experimental` and may change or be removed in any release,
+without a deprecation period; importing it emits `HarnessExperimentalWarning`.
+
+```bash
+uv add "pydantic-ai-harness[mcp-server]"
+```
+
+```python {test="skip"}
+from pydantic_ai import RunContext
+from pydantic_ai.toolsets import FunctionToolset
+
+from pydantic_ai_harness.experimental.mcp_server import run_mcp_toolset_server
+
+toolset = FunctionToolset()
+
+
+@toolset.tool
+def double(ctx: RunContext[dict[str, str]], x: int) -> str:
+    return ctx.deps['prefix'] + str(x * 2)
+
+
+run_mcp_toolset_server(toolsets=[toolset], name='math', deps={'prefix': 'result: '})
+```
+
 
 ## GitHub Agentic Workflows
 
