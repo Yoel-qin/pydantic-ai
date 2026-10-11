@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Literal
 
 StringSimilarityMetric = Literal['levenshtein', 'jaro_winkler']
@@ -71,7 +72,7 @@ def string_similarity(metric: StringSimilarityMetric, a: str, b: str) -> float:
     return jaro_winkler(a, b)
 
 
-def cosine_similarity(a: list[float], b: list[float]) -> float:
+def cosine_similarity(a: Sequence[float], b: Sequence[float]) -> float:
     """Cosine similarity of two vectors of equal length."""
     dot = sum(x * y for x, y in zip(a, b))
     norm = (sum(x * x for x in a) * sum(y * y for y in b)) ** 0.5

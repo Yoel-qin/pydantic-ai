@@ -663,7 +663,9 @@ async def test_string_similarity_evaluator():
 
 async def test_embedding_similarity_evaluator():
     """EmbeddingSimilarity compares the two embeddings' cosine similarity against the threshold."""
-    from pydantic_ai.embeddings import EmbeddingModel, EmbeddingResult
+    from collections.abc import Sequence
+
+    from pydantic_ai.embeddings import EmbeddingModel, EmbeddingResult, EmbeddingSettings, EmbedInputType
 
     class FakeEmbedder(EmbeddingModel):
         """Returns fixed vectors keyed by input text, so similarity is controlled per test."""
@@ -679,7 +681,9 @@ async def test_embedding_similarity_evaluator():
         def system(self) -> str:
             return 'fake'
 
-        async def embed(self, inputs, *, input_type, settings=None):
+        async def embed(
+            self, inputs: Sequence[str], *, input_type: EmbedInputType, settings: EmbeddingSettings | None = None
+        ) -> EmbeddingResult:
             return EmbeddingResult(
                 embeddings=[self.vectors[str(text)] for text in inputs],
                 inputs=list(inputs),
