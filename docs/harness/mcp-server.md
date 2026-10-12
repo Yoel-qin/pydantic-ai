@@ -58,6 +58,12 @@ run_mcp_toolset_server(toolsets=[toolset], name='math', deps={'prefix': 'result:
 Run the script and point an MCP client at its stdio transport; the client sees one tool, `double`,
 with the JSON schema derived from the type hints, and calls return the tool's result.
 
+Each call is validated exactly as the agent loop validates model tool calls: arguments run through the
+tool's schema and custom `args_validator`, and a validator raising `ApprovalRequired` or `CallDeferred`
+refuses the call with an error result, since this server has no approval mechanism. Tools returning
+`ToolReturn` are serialized from their return value; the application-only `metadata` field never reaches
+the client.
+
 `mcp_server_from_toolsets` builds the [`FastMCP`](https://gofastmcp.com) server without running it, for
 custom transports (`stdio`, `http` or `sse`) or embedding.
 
